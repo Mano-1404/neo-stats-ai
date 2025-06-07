@@ -2,6 +2,8 @@ import streamlit as st
 import pandas as pd
 from langchain_experimental.agents.agent_toolkits import create_pandas_dataframe_agent
 from langchain_google_genai import ChatGoogleGenerativeAI
+import os
+
 
 # --- Page Configuration ---
 st.set_page_config(
@@ -47,11 +49,12 @@ def main():
     st.title("🤖 AI-Powered Insights Assistant")
     st.write("Upload your Excel file and ask questions about your data using natural language.")
 
-    try:
-        api_key = st.secrets["GOOGLE_API_KEY"]
-    except:
-        st.warning("API Key not found in secrets. Please enter it below.")
-        api_key = st.text_input("Enter your Google API Key:", type="password")
+
+    api_key = os.getenv("GOOGLE_API_KEY")
+    if not api_key:
+        st.error("GOOGLE_API_KEY environment variable is missing.")
+        st.stop()
+
 
     if not api_key:
         st.info("Please provide an API key to proceed.")
